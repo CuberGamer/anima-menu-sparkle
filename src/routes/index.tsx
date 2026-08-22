@@ -12,6 +12,7 @@ import texGold from "@/assets/tex-gold.jpg";
 import generalImage from "@/assets/general.png";
 import btnFrame from "@/assets/btn-frame.png.asset.json";
 import btnFrameGold from "@/assets/btn-frame-gold.png.asset.json";
+import panelTile from "@/assets/panel-tile-cleaned.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
