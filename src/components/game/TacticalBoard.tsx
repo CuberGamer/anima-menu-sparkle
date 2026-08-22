@@ -135,7 +135,7 @@ export function TacticalBoard() {
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
           <section
-            className="animate-panel-pop border-tex-parchment w-full max-w-full border-[14px] p-1 sm:w-fit"
+            className="animate-panel-pop panel-sprite w-full max-w-full p-1 sm:w-fit"
             style={{ animationDelay: "0.1s" }}
           >
             <div
@@ -202,13 +202,8 @@ export function TacticalBoard() {
           </section>
 
           <aside
-            className="animate-panel-pop flex-1 p-4 sm:p-6"
-            style={{
-              animationDelay: "0.2s",
-              backgroundImage: "var(--tex-cell-panel)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className="animate-panel-pop panel-sprite flex-1 p-4 sm:p-6"
+            style={{ animationDelay: "0.2s" }}
           >
             <h2 className="text-pixel-shadow mb-3 text-lg text-card-foreground">
               CONTROLES
