@@ -39,7 +39,8 @@ const KEYS_BOTTOM = ["A", "S", "D", "F", "C"];
 
 function Panel({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <div className="animate-panel-pop pixel-panel texture-panel w-full max-w-4xl p-4 sm:p-10">
+    <div className="animate-panel-pop panel-sprite w-full max-w-4xl p-4 sm:p-10">
+
       {title && (
         <h2 className="animate-title-in text-gold-texture mb-6 text-center text-xl sm:mb-8 sm:text-4xl">
           {title}
