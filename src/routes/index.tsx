@@ -78,6 +78,7 @@ function Index() {
           "--tex-gold": `url(${texGold})`,
           "--tex-btn": `url(${btnFrame.url})`,
           "--tex-btn-gold": `url(${btnFrameGold.url})`,
+          "--tex-cell-panel": `url(${panelTile.url})`,
         } as React.CSSProperties
       }
     >
