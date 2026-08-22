@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { DoorOpen, FileText, Folder } from "lucide-react";
 import { PixelButton } from "@/components/game/PixelButton";
@@ -61,6 +61,7 @@ function BackButton({ onClick, label = "VOLVER" }: { onClick: () => void; label?
 }
 
 function Index() {
+  const navigate = useNavigate();
   const [screen, setScreen] = useState<Screen>("menu");
   const [volume, setVolume] = useState(30);
   const [partida, setPartida] = useState(1);
@@ -212,7 +213,12 @@ function Index() {
             <Panel>
               <div className="grid gap-10 sm:grid-cols-2">
                 <div className="flex flex-col gap-5">
-                  <PixelButton className="animate-slide-left">JUGAR PARTIDA</PixelButton>
+                  <PixelButton
+                    className="animate-slide-left"
+                    onClick={() => navigate({ to: "/tablero" })}
+                  >
+                    JUGAR PARTIDA
+                  </PixelButton>
                   <PixelButton
                     className="animate-slide-left"
                     style={{ animationDelay: "0.12s" }}
@@ -236,7 +242,15 @@ function Index() {
                         <Folder className="size-8 shrink-0 text-primary-foreground" aria-hidden />
                         <PixelButton
                           size="md"
-                          onClick={() => setPartida(n)}
+                          onClick={() => {
+                            setPartida(n);
+                            if (typeof window !== "undefined") {
+                              window.localStorage.setItem(
+                                "infiltrados:slot",
+                                String(n),
+                              );
+                            }
+                          }}
                           aria-pressed={partida === n}
                           className={
                             partida === n
