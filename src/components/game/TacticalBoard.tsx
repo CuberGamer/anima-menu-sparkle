@@ -135,7 +135,7 @@ export function TacticalBoard() {
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
           <section
-            className="animate-panel-pop border-tex-parchment w-full max-w-full border-[14px] p-1 sm:w-fit"
+            className="animate-panel-pop panel-sprite w-full max-w-full p-1 sm:w-fit"
             style={{ animationDelay: "0.1s" }}
           >
             <div
