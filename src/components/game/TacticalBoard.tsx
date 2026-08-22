@@ -202,13 +202,8 @@ export function TacticalBoard() {
           </section>
 
           <aside
-            className="animate-panel-pop flex-1 p-4 sm:p-6"
-            style={{
-              animationDelay: "0.2s",
-              backgroundImage: "var(--tex-cell-panel)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className="animate-panel-pop panel-sprite flex-1 p-4 sm:p-6"
+            style={{ animationDelay: "0.2s" }}
           >
             <h2 className="text-pixel-shadow mb-3 text-lg text-card-foreground">
               CONTROLES
