@@ -265,6 +265,32 @@
   border-image-repeat: stretch;
 }
 
+/* Panel de madera (contenedores principales) */
+@utility panel-sprite {
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 14px;
+  border-image-source: var(--tex-panel-wood);
+  border-image-slice: 4% 3% fill;
+  border-image-repeat: stretch;
+}
+
+/* Tarjeta de pergamino (lista, items, tarjetas) */
+@utility card-sprite {
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: var(--tex-card);
+  border-image-slice: 5% 3% fill;
+  border-image-repeat: stretch;
+}
+
 /* Panel oscuro interior (columnas / contenedores) */
 @utility dark-sprite {
   background-image: none;
@@ -272,11 +298,12 @@
   box-shadow: none;
   border-style: solid;
   border-color: transparent;
-  border-width: 18px;
-  border-image-source: var(--tex-dark);
-  border-image-slice: 13% 7% fill;
+  border-width: 10px;
+  border-image-source: var(--tex-panel-wood);
+  border-image-slice: 4% 3% fill;
   border-image-repeat: stretch;
 }
+
 
 /* Tecla pixel art */
 @utility key-sprite {
