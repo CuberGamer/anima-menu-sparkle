@@ -1,27 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TacticalBoard } from "@/components/game/TacticalBoard";
+import { InDevelopment } from "@/components/game/InDevelopment";
 
 export const Route = createFileRoute("/tablero")({
   head: () => ({
     meta: [
-      { title: "Infiltrados — Mision 1: Frontera" },
+      { title: "Infiltrados — Partida en desarrollo" },
       {
         name: "description",
         content:
-          "Primer nivel tactico de Infiltrados: guia al espia hasta la extraccion evitando a los guardias en la frontera argentina.",
+          "El mapa jugable de Infiltrados esta en desarrollo. Volve al menu principal para gestionar tus partidas.",
       },
-      {
-        property: "og:title",
-        content: "Infiltrados — Mision 1: Frontera",
-      },
+      { property: "og:title", content: "Infiltrados — Partida en desarrollo" },
       {
         property: "og:description",
-        content:
-          "Juego de espionaje pixel art: primer nivel tactico en la frontera argentina del 1800.",
+        content: "El nivel tactico de Infiltrados todavia esta en construccion.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: TacticalBoard,
+  component: InDevelopment,
 });
