@@ -204,23 +204,11 @@
 @utility animate-hero-pan { animation: hero-pan 24s ease-in-out infinite alternate; }
 @utility animate-key-press { animation: key-press 1.6s ease-in-out infinite; }
 
-@utility pixel-panel {
-  background-color: var(--panel-inner);
-  box-shadow: var(--shadow-panel);
-  border-top: 14px solid var(--panel-highlight);
-}
-
 @utility text-pixel-shadow {
   text-shadow: 4px 4px 0 oklch(0.12 0.02 40);
 }
 
 /* ---- Textures ---- */
-@utility texture-parchment {
-  background-image: var(--tex-parchment);
-  background-size: 220px 220px;
-  background-blend-mode: multiply;
-}
-
 @utility texture-panel {
   background-image: var(--tex-panel);
   background-size: 300px 300px;
@@ -232,30 +220,6 @@
   background-size: 200px 200px;
   background-color: var(--primary);
   background-blend-mode: multiply;
-}
-
-/* Textured borders: the whole button (edges included) is the texture */
-@utility border-tex {
-  border-style: solid;
-  border-color: transparent;
-  border-image-source: var(--tex-panel);
-  border-image-slice: 34% fill;
-  border-image-repeat: round;
-  border-image-outset: 0;
-}
-
-@utility border-tex-hover {
-  border-image-source: var(--tex-gold);
-  border-image-slice: 30% fill;
-  border-image-repeat: round;
-}
-
-@utility border-tex-parchment {
-  border-style: solid;
-  border-color: transparent;
-  border-image-source: var(--tex-parchment);
-  border-image-slice: 32% fill;
-  border-image-repeat: round;
 }
 
 /* Sprite de boton pixel art (marco + relleno en una sola imagen) */
