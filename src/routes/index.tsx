@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DoorOpen, FileText, Pencil, Play, Plus, Trash2 } from "lucide-react";
+import { DoorOpen, FileText, Image as ImageIcon, LogOut, Pencil } from "lucide-react";
 import { PixelButton } from "@/components/game/PixelButton";
 import { sfx } from "@/lib/sfx";
 import { loadSaves, saveSaves, type SaveGame } from "@/lib/saves";
@@ -14,7 +14,7 @@ import generalImage from "@/assets/general.png";
 import btnFrame from "@/assets/btn-frame.png.asset.json";
 import btnFrameGold from "@/assets/btn-frame-gold.png.asset.json";
 import panelTile from "@/assets/panel-tile-cleaned.jpeg.asset.json";
-import cardFrame from "@/assets/card-frame.png.asset.json";
+import cardFrame from "@/assets/card-frame-trim.png.asset.json";
 import panelDark from "@/assets/panel-dark.png.asset.json";
 import keycap from "@/assets/keycap.png.asset.json";
 
@@ -87,6 +87,7 @@ function Index() {
   const [selected, setSelected] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const selectedSave = saves.find((s) => s.id === selected) ?? null;
 
   useEffect(() => {
     const list = loadSaves();
@@ -269,57 +270,62 @@ function Index() {
 
           {screen === "partidas" && (
             <Panel title="GESTOR DE PARTIDAS">
-              <div className="grid gap-8 sm:grid-cols-[minmax(0,14rem)_1fr]">
+              <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
                 <div className="flex flex-col gap-4">
+                  <div className="dark-sprite flex aspect-[4/3] items-center justify-center p-2">
+                    {selectedSave ? (
+                      <div className="flex flex-col items-center gap-3 text-center">
+                        <ImageIcon className="size-12 text-muted-foreground" aria-hidden />
+                        <p className="text-[10px] text-muted-foreground sm:text-xs">
+                          {selectedSave.name}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="px-4 text-center text-[10px] text-muted-foreground sm:text-xs">
+                        SIN PARTIDA SELECCIONADA
+                      </p>
+                    )}
+                  </div>
+
                   <PixelButton
                     size="md"
                     onClick={play}
                     disabled={!selected}
-                    className="animate-slide-left flex w-full items-center justify-center gap-2 disabled:opacity-50"
+                    className="animate-slide-left w-full disabled:opacity-50"
                   >
-                    <Play className="size-4" aria-hidden />
-                    <span>INICIAR PARTIDA</span>
+                    JUGAR
                   </PixelButton>
                   <PixelButton
                     size="md"
                     onClick={createSave}
-                    className="animate-slide-left flex w-full items-center justify-center gap-2"
+                    className="animate-slide-left w-full"
                     style={{ animationDelay: "0.1s" }}
                   >
-                    <Plus className="size-4" aria-hidden />
-                    <span>NUEVA</span>
-                  </PixelButton>
-                  <PixelButton
-                    size="md"
-                    onClick={() => {
-                      const current = saves.find((s) => s.id === selected);
-                      if (!current) return;
-                      setEditingId(current.id);
-                      setDraft(current.name);
-                    }}
-                    disabled={!selected}
-                    className="animate-slide-left flex w-full items-center justify-center gap-2 disabled:opacity-50"
-                    style={{ animationDelay: "0.18s" }}
-                  >
-                    <Pencil className="size-4" aria-hidden />
-                    <span>RENOMBRAR</span>
+                    NUEVA PARTIDA
                   </PixelButton>
                   <PixelButton
                     size="md"
                     onClick={deleteSave}
                     disabled={!selected}
-                    className="animate-slide-left flex w-full items-center justify-center gap-2 disabled:opacity-50"
-                    style={{ animationDelay: "0.26s" }}
+                    className="animate-slide-left w-full text-destructive disabled:opacity-50"
+                    style={{ animationDelay: "0.18s" }}
                   >
-                    <Trash2 className="size-4" aria-hidden />
-                    <span>ELIMINAR</span>
+                    ELIMINAR
                   </PixelButton>
-                  <div className="mt-2">
-                    <BackButton onClick={() => setScreen("menu")} label="SALIR" />
+
+                  <div className="mt-2 flex">
+                    <PixelButton
+                      size="sm"
+                      onClick={() => setScreen("menu")}
+                      aria-label="Volver al menu"
+                      className="flex items-center justify-center"
+                    >
+                      <LogOut className="size-5" aria-hidden />
+                    </PixelButton>
                   </div>
                 </div>
 
-                <div className="dark-sprite min-h-[16rem] p-2">
+                <div className="dark-sprite max-h-[22rem] min-h-[16rem] overflow-y-auto p-2">
                   {saves.length === 0 ? (
                     <p className="p-6 text-center text-[10px] leading-relaxed text-muted-foreground sm:text-xs">
                       NO HAY PARTIDAS.
@@ -330,8 +336,14 @@ function Index() {
                     <ul className="flex flex-col gap-3">
                       {saves.map((s, i) => (
                         <li key={s.id}>
-                          {editingId === s.id ? (
-                            <div className="card-sprite flex items-center gap-2 px-2 py-1">
+                          <div
+                            className={
+                              "card-sprite animate-panel-pop flex items-center gap-2 px-2 py-1 transition-transform " +
+                              (selected === s.id ? "translate-x-1" : "opacity-80")
+                            }
+                            style={{ animationDelay: `${i * 0.06}s` }}
+                          >
+                            {editingId === s.id ? (
                               <input
                                 autoFocus
                                 value={draft}
@@ -345,34 +357,34 @@ function Index() {
                                 aria-label="Nombre de la partida"
                                 className="w-full bg-transparent text-[10px] text-primary-foreground outline-none sm:text-xs"
                               />
-                            </div>
-                          ) : (
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  sfx.click();
+                                  setSelected(s.id);
+                                }}
+                                onMouseEnter={() => sfx.hover()}
+                                aria-pressed={selected === s.id}
+                                className="min-w-0 flex-1 truncate text-left text-[10px] text-primary-foreground sm:text-xs"
+                              >
+                                {s.name}
+                              </button>
+                            )}
                             <button
                               type="button"
                               onClick={() => {
                                 sfx.click();
                                 setSelected(s.id);
-                              }}
-                              onDoubleClick={() => {
                                 setEditingId(s.id);
                                 setDraft(s.name);
                               }}
-                              onMouseEnter={() => sfx.hover()}
-                              aria-pressed={selected === s.id}
-                              className={
-                                "card-sprite animate-panel-pop flex w-full items-center justify-between gap-2 px-2 py-1 text-left text-[10px] text-primary-foreground transition-transform sm:text-xs " +
-                                (selected === s.id
-                                  ? "translate-x-1"
-                                  : "opacity-80 hover:translate-x-1")
-                              }
-                              style={{ animationDelay: `${i * 0.06}s` }}
+                              aria-label={`Editar ${s.name}`}
+                              className="key-sprite flex size-8 shrink-0 items-center justify-center"
                             >
-                              <span className="truncate">{s.name}</span>
-                              {selected === s.id && (
-                                <Play className="size-3 shrink-0" aria-hidden />
-                              )}
+                              <Pencil className="size-3 text-secondary-foreground" aria-hidden />
                             </button>
-                          )}
+                          </div>
                         </li>
                       ))}
                     </ul>

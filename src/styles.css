@@ -261,7 +261,7 @@
   border-color: transparent;
   border-width: 14px;
   border-image-source: var(--tex-card);
-  border-image-slice: 9% 5% fill;
+  border-image-slice: 10% 5% fill;
   border-image-repeat: stretch;
 }
 
