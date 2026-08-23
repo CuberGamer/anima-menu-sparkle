@@ -14,7 +14,7 @@ import generalImage from "@/assets/general.png";
 import btnFrame from "@/assets/btn-frame.png.asset.json";
 import btnFrameGold from "@/assets/btn-frame-gold.png.asset.json";
 import panelTile from "@/assets/panel-tile-cleaned.jpeg.asset.json";
-import cardFrame from "@/assets/card-frame.png.asset.json";
+import cardFrame from "@/assets/card-frame-trim.png.asset.json";
 import panelDark from "@/assets/panel-dark.png.asset.json";
 import keycap from "@/assets/keycap.png.asset.json";
 
