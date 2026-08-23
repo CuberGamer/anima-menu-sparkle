@@ -288,6 +288,46 @@
   border-image-repeat: stretch;
 }
 
+/* Tarjeta de pergamino (lista, items, tarjetas) */
+@utility card-sprite {
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 14px;
+  border-image-source: var(--tex-card);
+  border-image-slice: 9% 5% fill;
+  border-image-repeat: stretch;
+}
+
+/* Panel oscuro interior (columnas / contenedores) */
+@utility dark-sprite {
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 18px;
+  border-image-source: var(--tex-dark);
+  border-image-slice: 13% 7% fill;
+  border-image-repeat: stretch;
+}
+
+/* Tecla pixel art */
+@utility key-sprite {
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: var(--tex-key);
+  border-image-slice: 12% fill;
+  border-image-repeat: stretch;
+}
+
+
 
 
 
