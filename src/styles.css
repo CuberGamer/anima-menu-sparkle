@@ -239,16 +239,17 @@
   border-image-repeat: stretch;
 }
 
-/* Sprite de panel pixel art (marco negro + borde tostado + relleno) */
+
+/* Panel de madera (contenedores principales) */
 @utility panel-sprite {
   background-image: none;
   background-color: transparent;
   box-shadow: none;
   border-style: solid;
   border-color: transparent;
-  border-width: 22px;
-  border-image-source: var(--tex-cell-panel);
-  border-image-slice: 11% 6% fill;
+  border-width: 14px;
+  border-image-source: var(--tex-panel-wood);
+  border-image-slice: 4% 3% fill;
   border-image-repeat: stretch;
 }
 
@@ -259,9 +260,9 @@
   box-shadow: none;
   border-style: solid;
   border-color: transparent;
-  border-width: 14px;
+  border-width: 10px;
   border-image-source: var(--tex-card);
-  border-image-slice: 10% 5% fill;
+  border-image-slice: 5% 3% fill;
   border-image-repeat: stretch;
 }
 
@@ -272,11 +273,12 @@
   box-shadow: none;
   border-style: solid;
   border-color: transparent;
-  border-width: 18px;
-  border-image-source: var(--tex-dark);
-  border-image-slice: 13% 7% fill;
+  border-width: 10px;
+  border-image-source: var(--tex-panel-wood);
+  border-image-slice: 4% 3% fill;
   border-image-repeat: stretch;
 }
+
 
 /* Tecla pixel art */
 @utility key-sprite {
