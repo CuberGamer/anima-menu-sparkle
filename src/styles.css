@@ -239,31 +239,6 @@
   border-image-repeat: stretch;
 }
 
-/* Sprite de panel pixel art (marco negro + borde tostado + relleno) */
-@utility panel-sprite {
-  background-image: none;
-  background-color: transparent;
-  box-shadow: none;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 22px;
-  border-image-source: var(--tex-cell-panel);
-  border-image-slice: 11% 6% fill;
-  border-image-repeat: stretch;
-}
-
-/* Tarjeta de pergamino (lista, items, tarjetas) */
-@utility card-sprite {
-  background-image: none;
-  background-color: transparent;
-  box-shadow: none;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 14px;
-  border-image-source: var(--tex-card);
-  border-image-slice: 10% 5% fill;
-  border-image-repeat: stretch;
-}
 
 /* Panel de madera (contenedores principales) */
 @utility panel-sprite {
