@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DoorOpen, FileText, Pencil, Play, Plus, Trash2 } from "lucide-react";
+import { DoorOpen, FileText, Image as ImageIcon, LogOut, Pencil } from "lucide-react";
 import { PixelButton } from "@/components/game/PixelButton";
 import { sfx } from "@/lib/sfx";
 import { loadSaves, saveSaves, type SaveGame } from "@/lib/saves";
@@ -87,6 +87,7 @@ function Index() {
   const [selected, setSelected] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const selectedSave = saves.find((s) => s.id === selected) ?? null;
 
   useEffect(() => {
     const list = loadSaves();
