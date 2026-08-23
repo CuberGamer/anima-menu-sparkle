@@ -259,9 +259,9 @@
   box-shadow: none;
   border-style: solid;
   border-color: transparent;
-  border-width: 12px;
+  border-width: 14px;
   border-image-source: var(--tex-card);
-  border-image-slice: 4% 2.4% fill;
+  border-image-slice: 10% 5% fill;
   border-image-repeat: stretch;
 }
 
