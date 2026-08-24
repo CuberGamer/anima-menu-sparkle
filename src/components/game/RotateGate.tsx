@@ -3,18 +3,30 @@ import { Maximize, RotateCcw } from "lucide-react";
 import { PixelButton } from "./PixelButton";
 import { GAME_TEXTURE_VARS } from "@/lib/textures";
 
+type AnyElement = HTMLElement & {
+  webkitRequestFullscreen?: () => Promise<void>;
+  msRequestFullscreen?: () => Promise<void>;
+};
+
 type OrientationLockScreen = Screen & {
-  orientation?: { lock?: (o: string) => Promise<void> };
+  orientation?: {
+    lock?: (o: string) => Promise<void>;
+    unlock?: () => void;
+  };
+  mozLockOrientation?: (o: string) => Promise<boolean> | boolean;
+  msLockOrientation?: (o: string) => Promise<boolean> | boolean;
 };
 
 export function RotateGate() {
   const [portrait, setPortrait] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
 
   useEffect(() => {
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     const check = () => {
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
       setPortrait(isTouch && isPortrait && window.innerWidth < 1024);
+      if (!isPortrait) setHint(null);
     };
     check();
     window.addEventListener("resize", check);
@@ -25,15 +37,69 @@ export function RotateGate() {
     };
   }, []);
 
-  const goFullscreen = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
+  const enterFullscreen = async () => {
+    const el = document.documentElement as AnyElement;
+
+    if (document.fullscreenElement) return;
+
+    const request =
+      el.requestFullscreen?.bind(el) ??
+      el.webkitRequestFullscreen?.bind(el) ??
+      el.msRequestFullscreen?.bind(el);
+
+    if (!request) {
+      throw new Error("Fullscreen API no disponible");
+    }
+
+    await request();
+  };
+
+  const lockLandscape = async () => {
+    const screenApi = window.screen as OrientationLockScreen;
+
+    if (screenApi.orientation?.lock) {
+      try {
+        await screenApi.orientation.lock("landscape");
+        return;
+      } catch {
+        try {
+          await screenApi.orientation.lock("landscape-primary");
+          return;
+        } catch {
+          /* sigue con alternativas */
+        }
       }
-      const screenApi = window.screen as OrientationLockScreen;
-      await screenApi.orientation?.lock?.("landscape");
+    }
+
+    const legacyLock =
+      (screenApi as unknown as { lockOrientation?: (o: string) => Promise<boolean> | boolean })
+        .lockOrientation ??
+      screenApi.mozLockOrientation ??
+      screenApi.msLockOrientation;
+
+    if (legacyLock) {
+      const ok = await legacyLock("landscape");
+      if (!ok) throw new Error("No se pudo bloquear orientación");
+      return;
+    }
+
+    throw new Error("Screen Orientation API no disponible");
+  };
+
+  const goFullscreen = async () => {
+    setHint(null);
+
+    try {
+      await enterFullscreen();
+    } catch (fsErr) {
+      setHint("Tu navegador no permite pantalla completa automática. Gira el celular manualmente.");
+      return;
+    }
+
+    try {
+      await lockLandscape();
     } catch {
-      /* el navegador puede rechazarlo: el aviso se mantiene */
+      setHint("Pantalla completa activada. Si no gira solo, gira el celular manualmente.");
     }
   };
 
@@ -58,6 +124,9 @@ export function RotateGate() {
             <span>PANTALLA COMPLETA</span>
           </PixelButton>
         </div>
+        {hint && (
+          <p className="mt-4 text-[10px] leading-relaxed text-destructive">{hint}</p>
+        )}
       </div>
     </div>
   );
