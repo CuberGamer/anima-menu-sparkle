@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Maximize, RotateCcw } from "lucide-react";
-import { PixelButton } from "./PixelButton";
+import { sfx } from "@/lib/sfx";
 import { GAME_TEXTURE_VARS } from "@/lib/textures";
 
 type AnyElement = HTMLElement & {
@@ -16,6 +16,14 @@ type OrientationLockScreen = Screen & {
   mozLockOrientation?: (o: string) => Promise<boolean> | boolean;
   msLockOrientation?: (o: string) => Promise<boolean> | boolean;
 };
+
+function isIOS() {
+  if (typeof navigator === "undefined") return false;
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+    !(window as unknown as { MSStream?: unknown }).MSStream
+  );
+}
 
 export function RotateGate() {
   const [portrait, setPortrait] = useState(false);
@@ -89,9 +97,16 @@ export function RotateGate() {
   const goFullscreen = async () => {
     setHint(null);
 
+    if (isIOS()) {
+      setHint(
+        "En iPhone/iPad Safari no se puede forzar pantalla completa ni orientación. Gira el celular manualmente."
+      );
+      return;
+    }
+
     try {
       await enterFullscreen();
-    } catch (fsErr) {
+    } catch {
       setHint("Tu navegador no permite pantalla completa automática. Gira el celular manualmente.");
       return;
     }
@@ -119,10 +134,17 @@ export function RotateGate() {
           GIRA TU DISPOSITIVO PARA CONTINUAR.
         </p>
         <div className="mt-6 flex justify-center">
-          <PixelButton size="sm" onClick={goFullscreen} className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              void goFullscreen();
+            }}
+            className="btn-sprite flex min-h-11 items-center gap-2 px-4 py-2 text-[10px] uppercase tracking-wider text-secondary-foreground transition-all duration-100 hover:-translate-y-0.5 hover:btn-sprite-gold active:translate-y-1 active:btn-sprite-gold"
+          >
             <Maximize className="size-4" aria-hidden />
             <span>PANTALLA COMPLETA</span>
-          </PixelButton>
+          </button>
         </div>
         {hint && (
           <p className="mt-4 text-[10px] leading-relaxed text-destructive">{hint}</p>
