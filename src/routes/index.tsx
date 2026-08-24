@@ -7,16 +7,9 @@ import { loadSaves, saveSaves, type SaveGame } from "@/lib/saves";
 
 import bgImage from "@/assets/menu-bg.jpg";
 import logoImage from "@/assets/logo.png";
-import texParchment from "@/assets/tex-parchment.png";
-import texPanel from "@/assets/tex-panel.jpg";
-import texGold from "@/assets/tex-gold.jpg";
 import generalImage from "@/assets/general.png";
-import btnFrame from "@/assets/btn-frame.png.asset.json";
-import btnFrameGold from "@/assets/btn-frame-gold.png.asset.json";
-import panelTile from "@/assets/panel-tile-cleaned.jpeg.asset.json";
-import cardFrame from "@/assets/card-frame-trim.png.asset.json";
-import panelDark from "@/assets/panel-dark.png.asset.json";
-import keycap from "@/assets/keycap.png.asset.json";
+import { GAME_TEXTURE_VARS } from "@/lib/textures";
+import { RotateGate } from "@/components/game/RotateGate";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,17 +37,7 @@ type Screen = "menu" | "config" | "creditos" | "partidas";
 const KEYS_TOP = ["W", "X"];
 const KEYS_BOTTOM = ["A", "S", "D", "F", "C"];
 
-export const GAME_TEXTURE_VARS = {
-  "--tex-parchment": `url(${texParchment})`,
-  "--tex-panel": `url(${texPanel})`,
-  "--tex-gold": `url(${texGold})`,
-  "--tex-btn": `url(${btnFrame.url})`,
-  "--tex-btn-gold": `url(${btnFrameGold.url})`,
-  "--tex-cell-panel": `url(${panelTile.url})`,
-  "--tex-card": `url(${cardFrame.url})`,
-  "--tex-dark": `url(${panelDark.url})`,
-  "--tex-key": `url(${keycap.url})`,
-} as React.CSSProperties;
+
 
 function Panel({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
@@ -140,6 +123,7 @@ function Index() {
       className="relative min-h-[100svh] overflow-x-hidden overscroll-none"
       style={GAME_TEXTURE_VARS}
     >
+      <RotateGate />
       <img
         src={bgImage}
         alt="Aldea de frontera argentina al atardecer en pixel art"
