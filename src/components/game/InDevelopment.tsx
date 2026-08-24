@@ -4,15 +4,8 @@ import { DoorOpen, Hammer } from "lucide-react";
 import { PixelButton } from "./PixelButton";
 import { currentSaveName } from "@/lib/saves";
 
-import texParchment from "@/assets/tex-parchment.png";
-import texPanel from "@/assets/tex-panel.jpg";
-import texGold from "@/assets/tex-gold.jpg";
-import panelTile from "@/assets/panel-tile-cleaned.jpeg.asset.json";
-import btnFrame from "@/assets/btn-frame.png.asset.json";
-import btnFrameGold from "@/assets/btn-frame-gold.png.asset.json";
-import cardFrame from "@/assets/card-frame.png.asset.json";
-import panelDark from "@/assets/panel-dark.png.asset.json";
-import keycap from "@/assets/keycap.png.asset.json";
+import { GAME_TEXTURE_VARS } from "@/lib/textures";
+import { RotateGate } from "./RotateGate";
 
 export function InDevelopment() {
   const [name, setName] = useState<string | null>(null);
@@ -24,20 +17,9 @@ export function InDevelopment() {
   return (
     <main
       className="relative flex min-h-[100svh] items-center justify-center overflow-x-hidden p-4"
-      style={
-        {
-          "--tex-parchment": `url(${texParchment})`,
-          "--tex-panel": `url(${texPanel})`,
-          "--tex-gold": `url(${texGold})`,
-          "--tex-cell-panel": `url(${panelTile.url})`,
-          "--tex-btn": `url(${btnFrame.url})`,
-          "--tex-btn-gold": `url(${btnFrameGold.url})`,
-          "--tex-card": `url(${cardFrame.url})`,
-          "--tex-dark": `url(${panelDark.url})`,
-          "--tex-key": `url(${keycap.url})`,
-        } as React.CSSProperties
-      }
+      style={GAME_TEXTURE_VARS}
     >
+      <RotateGate />
       <div className="texture-panel fixed inset-0 bg-[var(--panel-frame)]" />
       <div className="texture-noise pointer-events-none fixed inset-0" />
 
