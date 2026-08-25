@@ -333,7 +333,7 @@ function Index() {
                             style={{ animationDelay: `${i * 0.06}s` }}
                           >
                             {selected === s.id && !editingId && (
-                              <span className="text-gold-texture shrink-0 text-[10px]">▶</span>
+                              <span className="shrink-0 text-[10px] text-primary-foreground">▶</span>
                             )}
                             {editingId === s.id ? (
                               <input
