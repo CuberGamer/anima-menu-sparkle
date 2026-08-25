@@ -256,14 +256,17 @@ function Index() {
             <Panel title="GESTOR DE PARTIDAS">
               <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
                 <div className="flex flex-col gap-4">
-                  <div className="dark-sprite flex aspect-[4/3] items-center justify-center p-2">
+                  <div className="dark-sprite flex aspect-[4/3] flex-col items-center justify-center gap-3 p-2">
                     {selectedSave ? (
-                      <div className="flex flex-col items-center gap-3 text-center">
+                      <>
                         <ImageIcon className="size-12 text-muted-foreground" aria-hidden />
                         <p className="text-[10px] text-muted-foreground sm:text-xs">
+                          PARTIDA SELECCIONADA
+                        </p>
+                        <p className="text-gold-texture text-center text-sm sm:text-base">
                           {selectedSave.name}
                         </p>
-                      </div>
+                      </>
                     ) : (
                       <p className="px-4 text-center text-[10px] text-muted-foreground sm:text-xs">
                         SIN PARTIDA SELECCIONADA
@@ -322,11 +325,16 @@ function Index() {
                         <li key={s.id}>
                           <div
                             className={
-                              "card-sprite animate-panel-pop flex items-center gap-2 px-2 py-1 transition-transform " +
-                              (selected === s.id ? "translate-x-1" : "opacity-80")
+                              "card-sprite animate-panel-pop flex items-center gap-2 px-2 py-1 transition-all " +
+                              (selected === s.id
+                                ? "btn-sprite-gold translate-x-1 scale-[1.02] shadow-lg"
+                                : "opacity-80 hover:opacity-100")
                             }
                             style={{ animationDelay: `${i * 0.06}s` }}
                           >
+                            {selected === s.id && !editingId && (
+                              <span className="text-gold-texture shrink-0 text-[10px]">▶</span>
+                            )}
                             {editingId === s.id ? (
                               <input
                                 autoFocus
