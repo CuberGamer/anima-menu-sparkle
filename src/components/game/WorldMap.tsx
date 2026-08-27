@@ -127,7 +127,7 @@ export function WorldMap() {
 
         {/* Panel de misiones */}
         <aside className="card-sprite absolute left-2 top-2 w-40 px-2 py-2 sm:left-4 sm:top-4 sm:w-56 sm:px-3">
-          <h2 className="text-pixel-shadow mb-2 text-[10px] text-primary-foreground sm:text-sm">
+          <h2 className="mb-2 text-[10px] text-primary-foreground sm:text-sm">
             MISIONES
           </h2>
           <ul className="space-y-2">
@@ -182,7 +182,7 @@ export function WorldMap() {
 
         {/* Inventario */}
         <aside className="dark-sprite absolute bottom-2 right-2 w-36 px-2 py-1 sm:bottom-4 sm:right-4 sm:w-52">
-          <h2 className="text-pixel-shadow mb-1 text-[9px] text-primary sm:text-xs">INVENTARIO</h2>
+          <h2 className="mb-1 text-[9px] text-primary sm:text-xs">INVENTARIO</h2>
           {inventory.length === 0 ? (
             <p className="text-[7px] text-muted-foreground sm:text-[9px]">VACIO</p>
           ) : (
