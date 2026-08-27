@@ -1,23 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { InDevelopment } from "@/components/game/InDevelopment";
+import { WorldMap } from "@/components/game/WorldMap";
 
 export const Route = createFileRoute("/tablero")({
   head: () => ({
     meta: [
-      { title: "Infiltrados — Partida en desarrollo" },
+      { title: "Infiltrados — Mapa del pueblo" },
       {
         name: "description",
         content:
-          "El mapa jugable de Infiltrados esta en desarrollo. Volve al menu principal para gestionar tus partidas.",
+          "Recorre la plaza, el puerto y el convento de Infiltrados: habla con NPCs, junta objetos y avanza tus misiones.",
       },
-      { property: "og:title", content: "Infiltrados — Partida en desarrollo" },
+      { property: "og:title", content: "Infiltrados — Mapa del pueblo" },
       {
         property: "og:description",
-        content: "El nivel tactico de Infiltrados todavia esta en construccion.",
+        content: "Explora el pueblo de frontera, habla con NPCs y completa misiones de espionaje.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: InDevelopment,
+  component: WorldMap,
 });
+
