@@ -1,6 +1,13 @@
 import scenePlaza from "@/assets/scene-plaza.jpg.asset.json";
 import scenePuerto from "@/assets/scene-puerto.jpg.asset.json";
 import sceneConvento from "@/assets/scene-convento.jpg.asset.json";
+import spriteAldeano from "@/assets/npc-aldeano.png";
+import spriteSoldado from "@/assets/npc-soldado.png";
+import spriteFraile from "@/assets/npc-fraile.png";
+import spriteBarriles from "@/assets/obj-barriles.png";
+import spritePozo from "@/assets/obj-pozo.png";
+import spriteCarreta from "@/assets/obj-carreta.png";
+import spriteCampana from "@/assets/obj-campana.png";
 
 export type Dir = "up" | "down" | "left" | "right";
 
@@ -11,6 +18,10 @@ export type Hotspot = {
   /** posicion en porcentaje sobre la escena */
   x: number;
   y: number;
+  /** textura pixel-art del npc u objeto */
+  sprite: string;
+  /** alto del sprite en porcentaje de la escena */
+  size?: number;
   lines: string[];
   /** item que se agrega al inventario al interactuar */
   gives?: string;
@@ -63,6 +74,8 @@ export const SCENES: Record<string, Scene> = {
     hotspots: [
       {
         id: "vendedor",
+        sprite: spriteAldeano,
+        size: 26,
         kind: "npc",
         label: "VENDEDOR",
         x: 76,
@@ -78,6 +91,8 @@ export const SCENES: Record<string, Scene> = {
       },
       {
         id: "soldado",
+        sprite: spriteSoldado,
+        size: 26,
         kind: "npc",
         label: "SOLDADO",
         x: 43,
@@ -89,6 +104,8 @@ export const SCENES: Record<string, Scene> = {
       },
       {
         id: "carro",
+        sprite: spriteCarreta,
+        size: 20,
         kind: "objeto",
         label: "CARRETA",
         x: 27,
@@ -107,6 +124,8 @@ export const SCENES: Record<string, Scene> = {
     hotspots: [
       {
         id: "contrabandista",
+        sprite: spriteAldeano,
+        size: 26,
         kind: "npc",
         label: "CONTRABANDISTA",
         x: 59,
@@ -122,6 +141,8 @@ export const SCENES: Record<string, Scene> = {
       },
       {
         id: "pescador",
+        sprite: spriteSoldado,
+        size: 24,
         kind: "npc",
         label: "PESCADOR",
         x: 33,
@@ -133,6 +154,8 @@ export const SCENES: Record<string, Scene> = {
       },
       {
         id: "barriles",
+        sprite: spriteBarriles,
+        size: 18,
         kind: "objeto",
         label: "BARRILES",
         x: 65,
@@ -151,6 +174,8 @@ export const SCENES: Record<string, Scene> = {
     hotspots: [
       {
         id: "monje",
+        sprite: spriteFraile,
+        size: 26,
         kind: "npc",
         label: "FRAILE",
         x: 24,
@@ -162,6 +187,8 @@ export const SCENES: Record<string, Scene> = {
       },
       {
         id: "pozo",
+        sprite: spritePozo,
+        size: 22,
         kind: "objeto",
         label: "POZO",
         x: 52,
@@ -176,6 +203,8 @@ export const SCENES: Record<string, Scene> = {
       },
       {
         id: "campana",
+        sprite: spriteCampana,
+        size: 16,
         kind: "objeto",
         label: "CAMPANARIO",
         x: 32,
