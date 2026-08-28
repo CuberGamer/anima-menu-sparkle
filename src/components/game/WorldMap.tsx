@@ -112,7 +112,8 @@ export function WorldMap() {
         <div
           key={`player-${scene.id}`}
           aria-hidden
-          className="player-sprite player-sprite-walk pointer-events-none absolute bottom-[6%] left-1/2 h-[22%] w-[7%] -translate-x-1/2 drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)]"
+          className="player-sprite player-sprite-walk pointer-events-none absolute bottom-[6%] left-1/2 h-[26%] w-auto -translate-x-1/2 drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)]"
+          style={{ aspectRatio: "160 / 512" }}
         />
 
 
