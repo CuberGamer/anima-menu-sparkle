@@ -91,21 +91,31 @@ export function WorldMap() {
             onClick={() => interact(h)}
             onMouseEnter={() => sfx.hover()}
             aria-label={`Interactuar con ${h.label}`}
-            className="group absolute -translate-x-1/2 -translate-y-1/2 touch-manipulation"
-            style={{ left: `${h.x}%`, top: `${h.y}%` }}
+            className="group absolute -translate-x-1/2 touch-manipulation"
+            style={{ left: `${h.x}%`, top: `${h.y}%`, height: `${h.size ?? 22}%`, transform: "translate(-50%,-85%)" }}
           >
-            <span className="animate-float-hat flex size-11 items-center justify-center rounded-full bg-[oklch(0_0_0/0.45)] ring-2 ring-[var(--panel-highlight)] transition-transform group-hover:scale-110 sm:size-14">
-              {h.kind === "npc" ? (
-                <User className="size-5 text-primary sm:size-7" aria-hidden />
-              ) : (
-                <Package className="size-5 text-primary sm:size-7" aria-hidden />
-              )}
-            </span>
+            <img
+              src={h.sprite}
+              alt={h.label}
+              loading="lazy"
+              className={
+                "h-full w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] transition-transform [image-rendering:pixelated] group-hover:scale-110 " +
+                (h.kind === "npc" ? "animate-sprite-bob" : "")
+              }
+            />
             <span className="card-sprite pointer-events-none absolute left-1/2 top-full mt-1 hidden -translate-x-1/2 whitespace-nowrap px-2 py-0.5 text-[9px] text-primary-foreground group-hover:block">
               {h.label}
             </span>
           </button>
         ))}
+
+        {/* Personaje jugable con hoja de sprites */}
+        <div
+          key={`player-${scene.id}`}
+          aria-hidden
+          className="player-sprite player-sprite-walk pointer-events-none absolute bottom-[6%] left-1/2 h-[22%] w-[7%] -translate-x-1/2 drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)]"
+        />
+
 
         {/* Flechas de movimiento */}
         {scene.exits.map((e) => {
