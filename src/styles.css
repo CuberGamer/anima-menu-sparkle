@@ -194,6 +194,14 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(4px); }
 }
+@keyframes sprite-walk {
+  from { background-position-x: 0%; }
+  to { background-position-x: 100%; }
+}
+@keyframes sprite-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
 
 @utility animate-float-hat { animation: float-hat 3.5s ease-in-out infinite; }
 @utility animate-title-in { animation: title-in 0.7s cubic-bezier(0.2,1.4,0.4,1) both; }
@@ -203,6 +211,20 @@
 @utility animate-scan { animation: scan 6s linear infinite; }
 @utility animate-hero-pan { animation: hero-pan 24s ease-in-out infinite alternate; }
 @utility animate-key-press { animation: key-press 1.6s ease-in-out infinite; }
+@utility animate-sprite-bob { animation: sprite-bob 2.2s ease-in-out infinite; }
+
+/* Hoja de sprites del jugador: 4 fotogramas en fila */
+@utility player-sprite {
+  background-image: var(--tex-player);
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+  background-position: 0 0;
+  image-rendering: pixelated;
+}
+@utility player-sprite-walk {
+  animation: sprite-walk 0.7s steps(4, jump-none) infinite;
+}
+
 
 @utility text-pixel-shadow {
   text-shadow: 4px 4px 0 oklch(0.12 0.02 40);
