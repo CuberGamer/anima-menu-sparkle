@@ -195,8 +195,8 @@
   50% { transform: translateY(4px); }
 }
 @keyframes sprite-walk {
-  from { background-position: 0 0; }
-  to { background-position: -400% 0; }
+  from { background-position-x: 0%; }
+  to { background-position-x: 100%; }
 }
 @keyframes sprite-bob {
   0%, 100% { transform: translateY(0); }
@@ -222,7 +222,7 @@
   image-rendering: pixelated;
 }
 @utility player-sprite-walk {
-  animation: sprite-walk 0.6s steps(4) infinite;
+  animation: sprite-walk 0.7s steps(4, jump-none) infinite;
 }
 
 
