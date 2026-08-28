@@ -6,9 +6,8 @@ import {
   ChevronRight,
   ChevronUp,
   DoorOpen,
-  Package,
-  User,
 } from "lucide-react";
+
 import { sfx } from "@/lib/sfx";
 import { currentSaveName } from "@/lib/saves";
 import { GAME_TEXTURE_VARS } from "@/lib/textures";
