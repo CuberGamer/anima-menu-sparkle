@@ -56,7 +56,7 @@ export type Quest = {
 export const QUESTS: Quest[] = [
   { id: "carta", title: "CONSEGUIR LA CARTA", detail: "Habla con el vendedor de la plaza." },
   { id: "llave", title: "LA LLAVE DEL PUERTO", detail: "Busca al contrabandista en el muelle." },
-  { id: "convento", title: "EL MENSAJE OCULTO", detail: "Revisa el pozo del convento." },
+  { id: "convento", title: "EL MENSAJE OCULTO", detail: "Habla con el fraile del convento." },
 ];
 
 export const SCENES: Record<string, Scene> = {
