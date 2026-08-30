@@ -194,10 +194,11 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(4px); }
 }
-@keyframes sprite-walk {
-  from { background-position-x: 0%; }
-  to { background-position-x: 100%; }
+@keyframes hero-step {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-4px) scaleY(1.03); }
 }
+
 @keyframes sprite-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
