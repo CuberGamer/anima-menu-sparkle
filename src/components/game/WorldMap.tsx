@@ -42,14 +42,26 @@ export function WorldMap() {
     [active, done],
   );
 
+  const walkTo = (x: number, y: number) => {
+    setPlayer((p) => {
+      const dx = x - p.x;
+      const dy = y - p.y;
+      return { x, y, facing: facingFromDelta(dx, dy) };
+    });
+    setWalking(true);
+    window.setTimeout(() => setWalking(false), 650);
+  };
+
   const go = (to: string) => {
     sfx.click();
     setTalking(null);
     setSceneId(to);
+    setPlayer({ x: 50, y: 86, facing: "south" });
   };
 
   const interact = (h: Hotspot) => {
     sfx.click();
+    walkTo(Math.min(92, Math.max(8, h.x)), Math.min(90, h.y + 8));
     setTalking({ hotspot: h, line: 0 });
     if (h.gives && !inventory.includes(h.gives)) setInventory((i) => [...i, h.gives!]);
     if (h.completes) {
@@ -58,6 +70,7 @@ export function WorldMap() {
     }
     if (h.starts) setActive((a) => (a.includes(h.starts!) ? a : [...a, h.starts!]));
   };
+
 
   const advance = () => {
     if (!talking) return;

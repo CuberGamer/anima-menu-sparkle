@@ -4,8 +4,6 @@ import sceneConvento from "@/assets/scene-convento.jpg.asset.json";
 import spriteAldeano from "@/assets/npc-aldeano.png";
 import spriteSoldado from "@/assets/npc-soldado.png";
 import spriteFraile from "@/assets/npc-fraile.png";
-import spriteBarriles from "@/assets/obj-barriles.png";
-import spritePozo from "@/assets/obj-pozo.png";
 import spriteCarreta from "@/assets/obj-carreta.png";
 import spriteCampana from "@/assets/obj-campana.png";
 
@@ -58,7 +56,7 @@ export type Quest = {
 export const QUESTS: Quest[] = [
   { id: "carta", title: "CONSEGUIR LA CARTA", detail: "Habla con el vendedor de la plaza." },
   { id: "llave", title: "LA LLAVE DEL PUERTO", detail: "Busca al contrabandista en el muelle." },
-  { id: "convento", title: "EL MENSAJE OCULTO", detail: "Revisa el pozo del convento." },
+  { id: "convento", title: "EL MENSAJE OCULTO", detail: "Habla con el fraile del convento." },
 ];
 
 export const SCENES: Record<string, Scene> = {
@@ -149,21 +147,12 @@ export const SCENES: Record<string, Scene> = {
         y: 45,
         lines: [
           "PESCADOR: El rio trae mas espias que peces ultimamente.",
-          "PESCADOR: Si vas al convento, entra por atras.",
+          "PESCADOR: Tomá esta polvora, escondela bien.",
+          "OBTUVISTE: POLVORA",
         ],
-      },
-      {
-        id: "barriles",
-        sprite: spriteBarriles,
-        size: 18,
-        kind: "objeto",
-        label: "BARRILES",
-        x: 65,
-        y: 28,
-        lines: ["Entre los barriles hay POLVORA escondida.", "OBTUVISTE: POLVORA"],
         gives: "POLVORA",
       },
-    ],
+      ],
   },
   convento: {
     id: "convento",
@@ -182,20 +171,7 @@ export const SCENES: Record<string, Scene> = {
         y: 47,
         lines: [
           "FRAILE: Aqui rezamos y callamos, hijo.",
-          "FRAILE: Lo que buscas duerme en el fondo del pozo.",
-        ],
-      },
-      {
-        id: "pozo",
-        sprite: spritePozo,
-        size: 22,
-        kind: "objeto",
-        label: "POZO",
-        x: 52,
-        y: 60,
-        lines: [
-          "Atado a la cuerda hay un tubo de cuero.",
-          "Dentro: los planos del regimiento.",
+          "FRAILE: Guardé esto para vos: los planos del regimiento.",
           "OBTUVISTE: PLANOS SECRETOS",
         ],
         gives: "PLANOS SECRETOS",
