@@ -6,6 +6,8 @@ import {
   ChevronRight,
   ChevronUp,
   DoorOpen,
+  EyeOff,
+  Timer,
 } from "lucide-react";
 
 import { sfx } from "@/lib/sfx";
@@ -13,8 +15,19 @@ import { currentSaveName } from "@/lib/saves";
 import { GAME_TEXTURE_VARS } from "@/lib/textures";
 import { RotateGate } from "./RotateGate";
 import { PixelButton } from "./PixelButton";
+import { StatBar } from "./StatBar";
+import { GameOverlay } from "./GameOverlay";
 import { QUESTS, SCENES, START_SCENE, type Dir, type Hotspot } from "@/lib/world";
 import { HERO_SPRITES, facingFromDelta, type Facing } from "@/lib/hero";
+import { useGameProgress } from "@/hooks/useGameProgress";
+import {
+  MAX_SUSPICION,
+  TOTAL_SECONDS,
+  changeScene,
+  formatClock,
+  hide,
+  interactWith,
+} from "@/lib/progress";
 import minimapAsset from "@/assets/minimap.png.asset.json";
 
 const ARROWS: Record<Dir, typeof ChevronUp> = {
@@ -25,11 +38,8 @@ const ARROWS: Record<Dir, typeof ChevronUp> = {
 };
 
 export function WorldMap() {
-  const [sceneId, setSceneId] = useState(START_SCENE);
+  const { progress, apply, restart, restored, saveError } = useGameProgress(START_SCENE);
   const [saveName, setSaveName] = useState<string | null>(null);
-  const [inventory, setInventory] = useState<string[]>([]);
-  const [done, setDone] = useState<string[]>([]);
-  const [active, setActive] = useState<string[]>(["carta"]);
   const [talking, setTalking] = useState<{ hotspot: Hotspot; line: number } | null>(null);
   const [player, setPlayer] = useState<{ x: number; y: number; facing: Facing }>({
     x: 50,
@@ -38,16 +48,17 @@ export function WorldMap() {
   });
   const [walking, setWalking] = useState(false);
 
-
-  const scene = SCENES[sceneId]!;
+  // Tolerancia a fallos: si el id guardado no existe, volvemos a la escena inicial.
+  const scene = SCENES[progress.sceneId] ?? SCENES[START_SCENE]!;
+  const playable = progress.status === "jugando";
 
   useEffect(() => {
     setSaveName(currentSaveName());
   }, []);
 
   const quests = useMemo(
-    () => QUESTS.filter((q) => active.includes(q.id) || done.includes(q.id)),
-    [active, done],
+    () => QUESTS.filter((q) => progress.active.includes(q.id) || progress.done.includes(q.id)),
+    [progress.active, progress.done],
   );
 
   const walkTo = (x: number, y: number) => {
@@ -61,24 +72,32 @@ export function WorldMap() {
   };
 
   const go = (to: string) => {
+    if (!playable) return;
     sfx.click();
     setTalking(null);
-    setSceneId(to);
+    apply((p) => changeScene(p, to));
     setPlayer({ x: 50, y: 86, facing: "south" });
   };
 
   const interact = (h: Hotspot) => {
+    if (!playable) return;
     sfx.click();
     walkTo(Math.min(92, Math.max(8, h.x)), Math.min(90, h.y + 8));
     setTalking({ hotspot: h, line: 0 });
-    if (h.gives && !inventory.includes(h.gives)) setInventory((i) => [...i, h.gives!]);
-    if (h.completes) {
-      setDone((d) => (d.includes(h.completes!) ? d : [...d, h.completes!]));
-      setActive((a) => a.filter((id) => id !== h.completes));
-    }
-    if (h.starts) setActive((a) => (a.includes(h.starts!) ? a : [...a, h.starts!]));
+    apply((p) => interactWith(p, h));
   };
 
+  const esconderse = () => {
+    if (!playable) return;
+    sfx.tick();
+    apply(hide);
+  };
+
+  const reintentar = () => {
+    setTalking(null);
+    setPlayer({ x: 50, y: 86, facing: "south" });
+    restart();
+  };
 
   const advance = () => {
     if (!talking) return;
@@ -134,7 +153,6 @@ export function WorldMap() {
           className="pointer-events-none absolute -translate-x-1/2 -translate-y-full transition-[left,top] duration-[600ms] ease-linear"
           style={{ left: `${player.x}%`, top: `${player.y}%` }}
         >
-          {/* Indicador arriba del personaje */}
           <div className="flex flex-col items-center">
             <span className="card-sprite animate-sprite-bob mb-0.5 px-1.5 py-0.5 text-[7px] leading-none text-primary-foreground sm:text-[9px]">
               VOS
@@ -155,8 +173,6 @@ export function WorldMap() {
           />
         </div>
 
-
-
         {/* Flechas de movimiento */}
         {scene.exits.map((e) => {
           const Icon = ARROWS[e.dir];
@@ -175,29 +191,57 @@ export function WorldMap() {
           );
         })}
 
-        {/* Panel de misiones */}
+        {/* Panel de misiones + estado */}
         <aside className="card-sprite absolute left-2 top-2 w-40 px-2 py-2 sm:left-4 sm:top-4 sm:w-56 sm:px-3">
-          <h2 className="mb-2 text-[10px] text-primary-foreground sm:text-sm">
-            MISIONES
-          </h2>
+          <div className="mb-2 flex items-center justify-between text-[8px] text-primary-foreground sm:text-[10px]">
+            <span className="flex items-center gap-1">
+              <Timer className="size-3" aria-hidden />
+              {formatClock(progress.secondsLeft)}
+            </span>
+            <span>PTS {progress.score}</span>
+          </div>
+          <div className="mb-2 space-y-1">
+            <StatBar
+              label="SOSPECHA"
+              value={progress.suspicion}
+              max={MAX_SUSPICION}
+              tone={progress.suspicion >= 60 ? "alert" : "calm"}
+            />
+            <StatBar label="TIEMPO" value={progress.secondsLeft} max={TOTAL_SECONDS} />
+          </div>
+          <h2 className="mb-2 text-[10px] text-primary-foreground sm:text-sm">MISIONES</h2>
           <ul className="space-y-2">
             {quests.map((q) => (
               <li key={q.id} className="text-[8px] leading-relaxed sm:text-[10px]">
                 <p
                   className={
-                    done.includes(q.id)
+                    progress.done.includes(q.id)
                       ? "text-muted-foreground line-through"
                       : "text-primary-foreground"
                   }
                 >
                   • {q.title}
                 </p>
-                {!done.includes(q.id) && (
+                {!progress.done.includes(q.id) && (
                   <p className="pl-2 text-[7px] text-muted-foreground sm:text-[9px]">{q.detail}</p>
                 )}
               </li>
             ))}
           </ul>
+          <PixelButton size="sm" className="mt-3 flex w-full items-center justify-center gap-1" onClick={esconderse}>
+            <EyeOff className="size-3" aria-hidden />
+            ESCONDERSE
+          </PixelButton>
+          {restored && (
+            <p className="mt-2 text-[7px] text-muted-foreground sm:text-[9px]">
+              PARTIDA RECUPERADA
+            </p>
+          )}
+          {saveError && (
+            <p className="mt-1 text-[7px] text-destructive sm:text-[9px]">
+              SIN GUARDADO: SEGUIS JUGANDO EN MEMORIA
+            </p>
+          )}
         </aside>
 
         {/* Minimapa */}
@@ -233,11 +277,11 @@ export function WorldMap() {
         {/* Inventario */}
         <aside className="dark-sprite absolute bottom-2 right-2 w-36 px-2 py-1 sm:bottom-4 sm:right-4 sm:w-52">
           <h2 className="mb-1 text-[9px] text-primary sm:text-xs">INVENTARIO</h2>
-          {inventory.length === 0 ? (
+          {progress.inventory.length === 0 ? (
             <p className="text-[7px] text-muted-foreground sm:text-[9px]">VACIO</p>
           ) : (
             <ul className="flex flex-wrap gap-1">
-              {inventory.map((it) => (
+              {progress.inventory.map((it) => (
                 <li
                   key={it}
                   className="card-sprite px-1 py-0.5 text-[7px] text-primary-foreground sm:text-[9px]"
@@ -265,7 +309,7 @@ export function WorldMap() {
         </div>
 
         {/* Dialogo */}
-        {talking && (
+        {talking && playable && (
           <button
             type="button"
             onClick={advance}
@@ -281,6 +325,15 @@ export function WorldMap() {
               </span>
             </span>
           </button>
+        )}
+
+        {!playable && (
+          <GameOverlay
+            title={progress.status === "victoria" ? "MISION CUMPLIDA" : "MISION FALLIDA"}
+            detail={progress.reason}
+            score={progress.score}
+            onRestart={reintentar}
+          />
         )}
       </section>
     </main>
