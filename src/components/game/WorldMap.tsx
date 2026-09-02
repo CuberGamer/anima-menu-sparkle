@@ -121,13 +121,32 @@ export function WorldMap() {
           </button>
         ))}
 
-        {/* Personaje jugable con hoja de sprites */}
+        {/* Personaje principal con sprites de 8 direcciones */}
         <div
-          key={`player-${scene.id}`}
-          aria-hidden
-          className="player-sprite player-sprite-walk pointer-events-none absolute bottom-[6%] left-1/2 h-[26%] w-auto -translate-x-1/2 drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)]"
-          style={{ aspectRatio: "160 / 512" }}
-        />
+          className="pointer-events-none absolute -translate-x-1/2 -translate-y-full transition-[left,top] duration-[600ms] ease-linear"
+          style={{ left: `${player.x}%`, top: `${player.y}%` }}
+        >
+          {/* Indicador arriba del personaje */}
+          <div className="flex flex-col items-center">
+            <span className="card-sprite animate-sprite-bob mb-0.5 px-1.5 py-0.5 text-[7px] leading-none text-primary-foreground sm:text-[9px]">
+              VOS
+            </span>
+            <span className="text-pixel-shadow -mt-1 text-[10px] leading-none text-primary sm:text-xs" aria-hidden>
+              ▼
+            </span>
+          </div>
+          <img
+            src={HERO_SPRITES[player.facing]}
+            alt="Personaje principal"
+            width={48}
+            height={48}
+            className={
+              "h-[13svh] w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] [image-rendering:pixelated] " +
+              (walking ? "animate-hero-step" : "")
+            }
+          />
+        </div>
+
 
 
         {/* Flechas de movimiento */}
