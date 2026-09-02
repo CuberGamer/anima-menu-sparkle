@@ -149,7 +149,7 @@ export function WorldMap() {
             width={48}
             height={48}
             className={
-              "h-[13svh] w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] [image-rendering:pixelated] " +
+              "h-[20svh] w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] [image-rendering:pixelated] " +
               (walking ? "animate-hero-step" : "")
             }
           />
