@@ -14,6 +14,7 @@ import { GAME_TEXTURE_VARS } from "@/lib/textures";
 import { RotateGate } from "./RotateGate";
 import { PixelButton } from "./PixelButton";
 import { QUESTS, SCENES, START_SCENE, type Dir, type Hotspot } from "@/lib/world";
+import { HERO_SPRITES, facingFromDelta, type Facing } from "@/lib/hero";
 import minimapAsset from "@/assets/minimap.png.asset.json";
 
 const ARROWS: Record<Dir, typeof ChevronUp> = {
@@ -30,6 +31,13 @@ export function WorldMap() {
   const [done, setDone] = useState<string[]>([]);
   const [active, setActive] = useState<string[]>(["carta"]);
   const [talking, setTalking] = useState<{ hotspot: Hotspot; line: number } | null>(null);
+  const [player, setPlayer] = useState<{ x: number; y: number; facing: Facing }>({
+    x: 50,
+    y: 86,
+    facing: "south",
+  });
+  const [walking, setWalking] = useState(false);
+
 
   const scene = SCENES[sceneId]!;
 
