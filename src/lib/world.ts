@@ -7,6 +7,8 @@ import spriteFraile from "@/assets/npc-fraile.png";
 import spriteCarreta from "@/assets/obj-carreta.png";
 import spriteCampana from "@/assets/obj-campana.png";
 
+import type { Rect } from "./collision";
+
 export type Dir = "up" | "down" | "left" | "right";
 
 export type Hotspot = {
@@ -32,8 +34,12 @@ export type Hotspot = {
 export type Exit = {
   dir: Dir;
   to: string;
+  /** centro de la zona de transicion en porcentaje */
   x: number;
   y: number;
+  /** tamano de la zona que dispara el cambio de escena */
+  w?: number;
+  h?: number;
   label: string;
 };
 
@@ -43,6 +49,10 @@ export type Scene = {
   image: string;
   /** posicion aproximada en el minimapa (porcentaje) */
   map: { x: number; y: number };
+  /** posicion inicial del jugador al entrar a la escena */
+  spawn: { x: number; y: number };
+  /** obstaculos solidos del mapa (colisiones) */
+  blockers: Rect[];
   exits: Exit[];
   hotspots: Hotspot[];
 };
@@ -65,9 +75,15 @@ export const SCENES: Record<string, Scene> = {
     name: "PLAZA MAYOR",
     image: scenePlaza.url,
     map: { x: 48, y: 50 },
+    spawn: { x: 50, y: 86 },
+    blockers: [
+      { x: 38, y: 46, w: 14, h: 8 },
+      { x: 70, y: 62, w: 14, h: 8 },
+      { x: 20, y: 68, w: 15, h: 8 },
+    ],
     exits: [
-      { dir: "right", to: "puerto", x: 95, y: 50, label: "AL PUERTO" },
-      { dir: "up", to: "convento", x: 50, y: 8, label: "AL CONVENTO" },
+      { dir: "right", to: "puerto", x: 94, y: 74, w: 8, h: 22, label: "AL PUERTO" },
+      { dir: "up", to: "convento", x: 50, y: 48, w: 16, h: 6, label: "AL CONVENTO" },
     ],
     hotspots: [
       {
@@ -118,7 +134,12 @@ export const SCENES: Record<string, Scene> = {
     name: "PUERTO",
     image: scenePuerto.url,
     map: { x: 74, y: 55 },
-    exits: [{ dir: "left", to: "plaza", x: 5, y: 50, label: "A LA PLAZA" }],
+    spawn: { x: 20, y: 82 },
+    blockers: [
+      { x: 26, y: 46, w: 18, h: 10 },
+      { x: 52, y: 58, w: 16, h: 8 },
+    ],
+    exits: [{ dir: "left", to: "plaza", x: 6, y: 76, w: 8, h: 22, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "contrabandista",
@@ -159,7 +180,12 @@ export const SCENES: Record<string, Scene> = {
     name: "CONVENTO",
     image: sceneConvento.url,
     map: { x: 45, y: 24 },
-    exits: [{ dir: "down", to: "plaza", x: 50, y: 94, label: "A LA PLAZA" }],
+    spawn: { x: 62, y: 88 },
+    blockers: [
+      { x: 18, y: 46, w: 16, h: 10 },
+      { x: 28, y: 60, w: 12, h: 8 },
+    ],
+    exits: [{ dir: "down", to: "plaza", x: 50, y: 93, w: 20, h: 6, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "monje",
