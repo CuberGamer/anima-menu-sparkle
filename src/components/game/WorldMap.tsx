@@ -1,14 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  DoorOpen,
-  EyeOff,
-  Timer,
-} from "lucide-react";
+import { DoorOpen, EyeOff, Timer } from "lucide-react";
 
 import { sfx } from "@/lib/sfx";
 import { currentSaveName } from "@/lib/saves";
@@ -17,9 +9,12 @@ import { RotateGate } from "./RotateGate";
 import { PixelButton } from "./PixelButton";
 import { StatBar } from "./StatBar";
 import { GameOverlay } from "./GameOverlay";
-import { QUESTS, SCENES, START_SCENE, type Dir, type Hotspot } from "@/lib/world";
-import { HERO_SPRITES, facingFromDelta, type Facing } from "@/lib/hero";
+import { DPad } from "./DPad";
+import { QUESTS, SCENES, START_SCENE, type Hotspot } from "@/lib/world";
+import { HERO_SPRITES } from "@/lib/hero";
+import { usePlayerMovement } from "@/hooks/usePlayerMovement";
 import { useGameProgress } from "@/hooks/useGameProgress";
+import { distance, rectContains, type Rect } from "@/lib/collision";
 import {
   MAX_SUSPICION,
   TOTAL_SECONDS,
@@ -30,62 +25,98 @@ import {
 } from "@/lib/progress";
 import minimapAsset from "@/assets/minimap.png.asset.json";
 
-const ARROWS: Record<Dir, typeof ChevronUp> = {
-  up: ChevronUp,
-  down: ChevronDown,
-  left: ChevronLeft,
-  right: ChevronRight,
-};
+/** Distancia maxima (en % de escena) para poder interactuar. */
+const REACH = 16;
+
+function exitRect(e: { x: number; y: number; w?: number; h?: number }): Rect {
+  const w = e.w ?? 8;
+  const h = e.h ?? 8;
+  return { x: e.x - w / 2, y: e.y - h / 2, w, h };
+}
 
 export function WorldMap() {
   const { progress, apply, restart, restored, saveError } = useGameProgress(START_SCENE);
   const [saveName, setSaveName] = useState<string | null>(null);
   const [talking, setTalking] = useState<{ hotspot: Hotspot; line: number } | null>(null);
-  const [player, setPlayer] = useState<{ x: number; y: number; facing: Facing }>({
-    x: 50,
-    y: 86,
-    facing: "south",
-  });
-  const [walking, setWalking] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
 
   // Tolerancia a fallos: si el id guardado no existe, volvemos a la escena inicial.
   const scene = SCENES[progress.sceneId] ?? SCENES[START_SCENE]!;
   const playable = progress.status === "jugando";
 
+  const { pos, facing, moving, teleport, setTouchInput } = usePlayerMovement(scene.spawn, {
+    blockers: scene.blockers,
+    enabled: playable && !talking,
+  });
+
+  const sceneRef = useRef(scene.id);
+  const posRef = useRef(pos);
+  posRef.current = pos;
+
   useEffect(() => {
     setSaveName(currentSaveName());
   }, []);
+
+  // Al cambiar de escena reposicionamos al jugador en el punto de entrada.
+  useEffect(() => {
+    if (sceneRef.current !== scene.id) {
+      sceneRef.current = scene.id;
+      teleport(scene.spawn);
+    }
+  }, [scene.id, scene.spawn, teleport]);
 
   const quests = useMemo(
     () => QUESTS.filter((q) => progress.active.includes(q.id) || progress.done.includes(q.id)),
     [progress.active, progress.done],
   );
 
-  const walkTo = (x: number, y: number) => {
-    setPlayer((p) => {
-      const dx = x - p.x;
-      const dy = y - p.y;
-      return { x, y, facing: facingFromDelta(dx, dy) };
-    });
-    setWalking(true);
-    window.setTimeout(() => setWalking(false), 650);
-  };
+  const showHint = useCallback((text: string) => {
+    setHint(text);
+    window.setTimeout(() => setHint((h) => (h === text ? null : h)), 1600);
+  }, []);
 
-  const go = (to: string) => {
+  // Transicion de escena al pisar una zona de salida.
+  useEffect(() => {
     if (!playable) return;
+    const zone = scene.exits.find((e) => rectContains(exitRect(e), pos.x, pos.y));
+    if (!zone) return;
     sfx.click();
     setTalking(null);
-    apply((p) => changeScene(p, to));
-    setPlayer({ x: 50, y: 86, facing: "south" });
-  };
+    apply((p) => changeScene(p, zone.to));
+  }, [pos, scene.exits, playable, apply]);
 
-  const interact = (h: Hotspot) => {
-    if (!playable) return;
-    sfx.click();
-    walkTo(Math.min(92, Math.max(8, h.x)), Math.min(90, h.y + 8));
-    setTalking({ hotspot: h, line: 0 });
-    apply((p) => interactWith(p, h));
-  };
+  const interact = useCallback(
+    (h: Hotspot) => {
+      if (!playable) return;
+      if (distance(posRef.current, { x: h.x, y: h.y }) > REACH) {
+        sfx.tick();
+        showHint(`ACERCATE A ${h.label}`);
+        return;
+      }
+      sfx.click();
+      setTalking({ hotspot: h, line: 0 });
+      apply((p) => interactWith(p, h));
+    },
+    [apply, playable, showHint],
+  );
+
+  // Tecla de accion: interactua con lo mas cercano.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== "Space" && e.code !== "Enter" && e.code !== "KeyE") return;
+      e.preventDefault();
+      if (talking) {
+        advance();
+        return;
+      }
+      const near = scene.hotspots
+        .map((h) => ({ h, d: distance(posRef.current, { x: h.x, y: h.y }) }))
+        .sort((a, b) => a.d - b.d)[0];
+      if (near && near.d <= REACH) interact(near.h);
+    };
+    window.addEventListener("keydown", onKey, { passive: false });
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   const esconderse = () => {
     if (!playable) return;
@@ -95,17 +126,18 @@ export function WorldMap() {
 
   const reintentar = () => {
     setTalking(null);
-    setPlayer({ x: 50, y: 86, facing: "south" });
+    teleport(SCENES[START_SCENE]!.spawn);
     restart();
   };
 
-  const advance = () => {
-    if (!talking) return;
-    sfx.tick();
-    const next = talking.line + 1;
-    if (next >= talking.hotspot.lines.length) setTalking(null);
-    else setTalking({ ...talking, line: next });
-  };
+  function advance() {
+    setTalking((t) => {
+      if (!t) return t;
+      sfx.tick();
+      const next = t.line + 1;
+      return next >= t.hotspot.lines.length ? null : { ...t, line: next };
+    });
+  }
 
   return (
     <main className="relative min-h-[100svh] overflow-hidden bg-[var(--panel-frame)]" style={GAME_TEXTURE_VARS}>
@@ -122,36 +154,62 @@ export function WorldMap() {
         />
         <div className="texture-noise pointer-events-none absolute inset-0" />
 
+        {/* Zonas de salida: se cruzan caminando */}
+        {scene.exits.map((e) => {
+          const r = exitRect(e);
+          return (
+            <div
+              key={e.to + e.dir}
+              aria-hidden
+              className="pointer-events-none absolute flex items-end justify-center"
+              style={{ left: `${r.x}%`, top: `${r.y}%`, width: `${r.w}%`, height: `${r.h}%` }}
+            >
+              <span className="card-sprite animate-flicker px-1 py-0.5 text-[6px] text-primary-foreground sm:text-[8px]">
+                {e.label}
+              </span>
+            </div>
+          );
+        })}
+
         {/* Hotspots interactuables */}
-        {scene.hotspots.map((h) => (
-          <button
-            key={h.id}
-            type="button"
-            onClick={() => interact(h)}
-            onMouseEnter={() => sfx.hover()}
-            aria-label={`Interactuar con ${h.label}`}
-            className="group absolute -translate-x-1/2 touch-manipulation"
-            style={{ left: `${h.x}%`, top: `${h.y}%`, height: `${h.size ?? 22}%`, transform: "translate(-50%,-85%)" }}
-          >
-            <img
-              src={h.sprite}
-              alt={h.label}
-              loading="lazy"
-              className={
-                "h-full w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] transition-transform [image-rendering:pixelated] group-hover:scale-110 " +
-                (h.kind === "npc" ? "animate-sprite-bob" : "")
-              }
-            />
-            <span className="card-sprite pointer-events-none absolute left-1/2 top-full mt-1 hidden -translate-x-1/2 whitespace-nowrap px-2 py-0.5 text-[9px] text-primary-foreground group-hover:block">
-              {h.label}
-            </span>
-          </button>
-        ))}
+        {scene.hotspots.map((h) => {
+          const near = distance(pos, { x: h.x, y: h.y }) <= REACH;
+          return (
+            <button
+              key={h.id}
+              type="button"
+              onClick={() => interact(h)}
+              onMouseEnter={() => sfx.hover()}
+              aria-label={`Interactuar con ${h.label}`}
+              className="group absolute -translate-x-1/2 touch-manipulation"
+              style={{ left: `${h.x}%`, top: `${h.y}%`, height: `${h.size ?? 22}%`, transform: "translate(-50%,-85%)" }}
+            >
+              <img
+                src={h.sprite}
+                alt={h.label}
+                loading="lazy"
+                className={
+                  "h-full w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] transition-transform [image-rendering:pixelated] group-hover:scale-110 " +
+                  (h.kind === "npc" ? "animate-sprite-bob " : "") +
+                  (near ? "" : "opacity-90")
+                }
+              />
+              <span
+                className={
+                  "card-sprite pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 text-[9px] text-primary-foreground " +
+                  (near ? "block" : "hidden group-hover:block")
+                }
+              >
+                {near ? `${h.label} · [E]` : h.label}
+              </span>
+            </button>
+          );
+        })}
 
         {/* Personaje principal con sprites de 8 direcciones */}
         <div
-          className="pointer-events-none absolute -translate-x-1/2 -translate-y-full transition-[left,top] duration-[600ms] ease-linear"
-          style={{ left: `${player.x}%`, top: `${player.y}%` }}
+          className="pointer-events-none absolute -translate-x-1/2 -translate-y-full"
+          style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
         >
           <div className="flex flex-col items-center">
             <span className="card-sprite animate-sprite-bob mb-0.5 px-1.5 py-0.5 text-[7px] leading-none text-primary-foreground sm:text-[9px]">
@@ -162,34 +220,16 @@ export function WorldMap() {
             </span>
           </div>
           <img
-            src={HERO_SPRITES[player.facing]}
+            src={HERO_SPRITES[facing]}
             alt="Personaje principal"
             width={48}
             height={48}
             className={
               "h-[20svh] w-auto drop-shadow-[4px_6px_0_oklch(0_0_0/0.45)] [image-rendering:pixelated] " +
-              (walking ? "animate-hero-step" : "")
+              (moving ? "animate-hero-step" : "")
             }
           />
         </div>
-
-        {/* Flechas de movimiento */}
-        {scene.exits.map((e) => {
-          const Icon = ARROWS[e.dir];
-          return (
-            <button
-              key={e.to + e.dir}
-              type="button"
-              onClick={() => go(e.to)}
-              onMouseEnter={() => sfx.hover()}
-              aria-label={e.label}
-              className="key-sprite absolute flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition-transform hover:scale-110 active:scale-95 sm:size-16"
-              style={{ left: `${e.x}%`, top: `${e.y}%` }}
-            >
-              <Icon className="size-7 text-secondary-foreground" aria-hidden />
-            </button>
-          );
-        })}
 
         {/* Panel de misiones + estado */}
         <aside className="card-sprite absolute left-2 top-2 w-40 px-2 py-2 sm:left-4 sm:top-4 sm:w-56 sm:px-3">
@@ -232,10 +272,11 @@ export function WorldMap() {
             <EyeOff className="size-3" aria-hidden />
             ESCONDERSE
           </PixelButton>
+          <p className="mt-2 text-[7px] text-muted-foreground sm:text-[9px]">
+            WASD / FLECHAS PARA MOVERSE · [E] INTERACTUAR
+          </p>
           {restored && (
-            <p className="mt-2 text-[7px] text-muted-foreground sm:text-[9px]">
-              PARTIDA RECUPERADA
-            </p>
+            <p className="mt-1 text-[7px] text-muted-foreground sm:text-[9px]">PARTIDA RECUPERADA</p>
           )}
           {saveError && (
             <p className="mt-1 text-[7px] text-destructive sm:text-[9px]">
@@ -244,7 +285,7 @@ export function WorldMap() {
           )}
         </aside>
 
-        {/* Minimapa */}
+        {/* Minimapa con la posicion real del jugador */}
         <div className="absolute right-2 top-2 sm:right-4 sm:top-4">
           <div className="relative size-24 sm:size-36">
             <img
@@ -293,20 +334,29 @@ export function WorldMap() {
           )}
         </aside>
 
-        {/* Volver al menu */}
-        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4">
-          <Link to="/">
-            <PixelButton size="sm" className="flex items-center gap-2">
-              <DoorOpen className="size-4" aria-hidden />
-              <span className="hidden sm:inline">MENU</span>
-            </PixelButton>
-          </Link>
-          {saveName && (
-            <p className="text-pixel-shadow mt-1 text-[8px] text-primary sm:text-[10px]">
-              {saveName}
-            </p>
-          )}
+        {/* Controles tactiles + volver al menu */}
+        <div className="absolute bottom-2 left-2 flex items-end gap-3 sm:bottom-4 sm:left-4">
+          <DPad onInput={setTouchInput} />
+          <div>
+            <Link to="/">
+              <PixelButton size="sm" className="flex items-center gap-2">
+                <DoorOpen className="size-4" aria-hidden />
+                <span className="hidden sm:inline">MENU</span>
+              </PixelButton>
+            </Link>
+            {saveName && (
+              <p className="text-pixel-shadow mt-1 text-[8px] text-primary sm:text-[10px]">
+                {saveName}
+              </p>
+            )}
+          </div>
         </div>
+
+        {hint && (
+          <p className="card-sprite animate-panel-pop absolute left-1/2 top-4 -translate-x-1/2 px-3 py-1 text-[8px] text-primary-foreground sm:text-[10px]">
+            {hint}
+          </p>
+        )}
 
         {/* Dialogo */}
         {talking && playable && (
