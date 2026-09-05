@@ -82,8 +82,8 @@ export const SCENES: Record<string, Scene> = {
       { x: 20, y: 68, w: 15, h: 8 },
     ],
     exits: [
-      { dir: "right", to: "puerto", x: 94, y: 74, w: 8, h: 22, label: "AL PUERTO" },
-      { dir: "up", to: "convento", x: 50, y: 48, w: 16, h: 6, label: "AL CONVENTO" },
+      { dir: "right", to: "puerto", x: 94, y: 71, w: 8, h: 44, label: "AL PUERTO" },
+      { dir: "up", to: "convento", x: 70, y: 48, w: 16, h: 5, label: "AL CONVENTO" },
     ],
     hotspots: [
       {
@@ -139,7 +139,7 @@ export const SCENES: Record<string, Scene> = {
       { x: 26, y: 46, w: 18, h: 10 },
       { x: 52, y: 58, w: 16, h: 8 },
     ],
-    exits: [{ dir: "left", to: "plaza", x: 6, y: 76, w: 8, h: 22, label: "A LA PLAZA" }],
+    exits: [{ dir: "left", to: "plaza", x: 6, y: 71, w: 8, h: 44, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "contrabandista",
@@ -185,7 +185,7 @@ export const SCENES: Record<string, Scene> = {
       { x: 18, y: 46, w: 16, h: 10 },
       { x: 28, y: 60, w: 12, h: 8 },
     ],
-    exits: [{ dir: "down", to: "plaza", x: 50, y: 93, w: 20, h: 6, label: "A LA PLAZA" }],
+    exits: [{ dir: "down", to: "plaza", x: 50, y: 92, w: 24, h: 5, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "monje",
