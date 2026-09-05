@@ -157,6 +157,7 @@ export function WorldMap() {
         {/* Zonas de salida: se cruzan caminando */}
         {scene.exits.map((e) => {
           const r = exitRect(e);
+          const near = distance(pos, { x: e.x, y: e.y }) <= 22;
           return (
             <div
               key={e.to + e.dir}
@@ -164,9 +165,11 @@ export function WorldMap() {
               className="pointer-events-none absolute flex items-end justify-center"
               style={{ left: `${r.x}%`, top: `${r.y}%`, width: `${r.w}%`, height: `${r.h}%` }}
             >
-              <span className="card-sprite animate-flicker px-1 py-0.5 text-[6px] text-primary-foreground sm:text-[8px]">
-                {e.label}
-              </span>
+              {near && (
+                <span className="card-sprite animate-flicker px-1 py-0.5 text-[6px] text-primary-foreground sm:text-[8px]">
+                  {e.label}
+                </span>
+              )}
             </div>
           );
         })}
