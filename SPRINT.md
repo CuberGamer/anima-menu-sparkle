@@ -5,7 +5,14 @@ Ampliar la instancia jugable de *Infiltrados* con una mecánica de **sigilo bajo
 (sospecha + temporizador + puntaje + condiciones de victoria/derrota + acción "esconderse"),
 sin afectar la exploración, los diálogos, las misiones ni el inventario ya existentes.
 
-## Nueva mecánica
+## Nueva mecánica de movimiento y colisiones
+- **Movimiento libre** con WASD / flechas en escritorio y cruceta táctil en mobile (ya no se navega con botones de flecha).
+- **Colisiones**: cada escena define su área caminable y sus obstáculos sólidos; el personaje se desliza contra las paredes.
+- **Sprites direccionales**: el personaje cambia entre sus 8 orientaciones según hacia dónde camina y anima el paso.
+- **Transiciones por zona**: se cambia de escena caminando hasta la salida (puerto, plaza, convento).
+- **Interacción por proximidad**: hay que acercarse al NPC u objeto y usar [E] (o tocarlo); si estás lejos avisa "ACERCATE A ...".
+
+## Mecánica de sigilo
 - **Sospecha (0–100):** sube al cambiar de escena (+4) y al hablar con el soldado (+18).
 - **Temporizador:** 5 minutos (05:00) para completar la infiltración.
 - **Puntaje:** +50 por objeto obtenido, +150 por misión completada.
