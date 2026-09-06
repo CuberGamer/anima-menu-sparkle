@@ -15,10 +15,14 @@ type Props = {
  */
 export function TileScene({ map, name }: Props) {
   const cells = useMemo(() => {
-    const list: { key: string; def: typeof TILES[string] }[] = [];
+    const list: { key: string; def: typeof TILES[string]; alt: boolean }[] = [];
     for (let row = 0; row < TILE_ROWS; row++) {
       for (let col = 0; col < TILE_COLS; col++) {
-        list.push({ key: `${col}-${row}`, def: tileAt(map, col, row) });
+        list.push({
+          key: `${col}-${row}`,
+          def: tileAt(map, col, row),
+          alt: (col + row) % 2 === 0,
+        });
       }
     }
     return list;
@@ -37,7 +41,7 @@ export function TileScene({ map, name }: Props) {
       {cells.map((c) => (
         <span
           key={c.key}
-          className={`tile tile-${c.def.pattern}`}
+          className={`tile tile-${c.def.pattern}${c.alt ? " tile-alt" : ""}`}
           style={{ backgroundColor: `var(${c.def.color})` }}
         />
       ))}
