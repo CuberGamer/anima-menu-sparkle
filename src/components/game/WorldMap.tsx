@@ -14,7 +14,9 @@ import { QUESTS, SCENES, START_SCENE, type Hotspot } from "@/lib/world";
 import { HERO_SPRITES } from "@/lib/hero";
 import { usePlayerMovement } from "@/hooks/usePlayerMovement";
 import { useGameProgress } from "@/hooks/useGameProgress";
-import { distance, rectContains, type Rect } from "@/lib/collision";
+import { MAP_BOUNDS, distance, rectContains, type Rect } from "@/lib/collision";
+import { tilemapBlockers } from "@/lib/tilemap";
+import { TileScene } from "./TileScene";
 import {
   MAX_SUSPICION,
   TOTAL_SECONDS,
@@ -44,8 +46,12 @@ export function WorldMap() {
   const scene = SCENES[progress.sceneId] ?? SCENES[START_SCENE]!;
   const playable = progress.status === "jugando";
 
+  // Las colisiones se derivan del propio mapa de tiles.
+  const blockers = useMemo(() => tilemapBlockers(scene.tiles), [scene.tiles]);
+
   const { pos, facing, moving, teleport, setTouchInput } = usePlayerMovement(scene.spawn, {
-    blockers: scene.blockers,
+    blockers,
+    bounds: MAP_BOUNDS,
     enabled: playable && !talking,
   });
 
@@ -144,14 +150,7 @@ export function WorldMap() {
       <RotateGate />
 
       <section className="relative mx-auto h-[100svh] w-full max-w-[1600px]">
-        <img
-          key={scene.id}
-          src={scene.image}
-          alt={`Escena ${scene.name} del pueblo en pixel art`}
-          width={1536}
-          height={864}
-          className="animate-panel-pop absolute inset-0 size-full object-cover [image-rendering:pixelated]"
-        />
+        <TileScene key={scene.id} map={scene.tiles} name={scene.name} />
         <div className="texture-noise pointer-events-none absolute inset-0" />
 
         {/* Zonas de salida: se cruzan caminando */}
