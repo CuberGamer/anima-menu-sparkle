@@ -4,8 +4,7 @@ import spriteFraile from "@/assets/npc-fraile.png";
 import spriteCarreta from "@/assets/obj-carreta.png";
 import spriteCampana from "@/assets/obj-campana.png";
 
-import type { Rect } from "./collision";
-import { TILEMAPS, tilemapBlockers } from "./tilemap";
+import { TILEMAPS } from "./tilemap";
 
 export type Dir = "up" | "down" | "left" | "right";
 
@@ -50,8 +49,6 @@ export type Scene = {
   map: { x: number; y: number };
   /** posicion inicial del jugador al entrar a la escena */
   spawn: { x: number; y: number };
-  /** obstaculos solidos derivados de los tiles solidos */
-  blockers: Rect[];
   exits: Exit[];
   hotspots: Hotspot[];
 };
@@ -74,10 +71,10 @@ export const SCENES: Record<string, Scene> = {
     name: "PLAZA MAYOR",
     tiles: TILEMAPS["plaza"]!,
     map: { x: 48, y: 50 },
-    spawn: { x: 50, y: 86 },
+    spawn: { x: 50, y: 75 },
     exits: [
-      { dir: "right", to: "puerto", x: 94, y: 71, w: 8, h: 44, label: "AL PUERTO" },
-      { dir: "up", to: "convento", x: 70, y: 48, w: 16, h: 5, label: "AL CONVENTO" },
+      { dir: "right", to: "puerto", x: 98, y: 54, w: 5, h: 16, label: "AL PUERTO" },
+      { dir: "up", to: "convento", x: 50, y: 8, w: 10, h: 14, label: "AL CONVENTO" },
     ],
     hotspots: [
       {
@@ -86,8 +83,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "VENDEDOR",
-        x: 76,
-        y: 74,
+        x: 72,
+        y: 71,
         lines: [
           "VENDEDOR: Buenas, forastero. Cuidado con los soldados.",
           "VENDEDOR: Me dejaron esta carta para alguien como vos.",
@@ -103,8 +100,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "SOLDADO",
-        x: 43,
-        y: 42,
+        x: 78,
+        y: 25,
         lines: [
           "SOLDADO: Nadie entra al cabildo sin permiso.",
           "SOLDADO: Segui tu camino y no hagas ruido.",
@@ -116,8 +113,8 @@ export const SCENES: Record<string, Scene> = {
         size: 20,
         kind: "objeto",
         label: "CARRETA",
-        x: 27,
-        y: 79,
+        x: 22,
+        y: 38,
         lines: ["Bajo la lona hay una BOLSA DE MONEDAS.", "OBTUVISTE: MONEDAS"],
         gives: "MONEDAS",
       },
@@ -128,8 +125,8 @@ export const SCENES: Record<string, Scene> = {
     name: "PUERTO",
     tiles: TILEMAPS["puerto"]!,
     map: { x: 74, y: 55 },
-    spawn: { x: 20, y: 82 },
-    exits: [{ dir: "left", to: "plaza", x: 6, y: 71, w: 8, h: 44, label: "A LA PLAZA" }],
+    spawn: { x: 20, y: 60 },
+    exits: [{ dir: "left", to: "plaza", x: 2, y: 54, w: 5, h: 16, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "contrabandista",
@@ -137,8 +134,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "CONTRABANDISTA",
-        x: 59,
-        y: 66,
+        x: 40,
+        y: 42,
         lines: [
           "CONTRABANDISTA: Traes la carta? Bien.",
           "CONTRABANDISTA: Toma la llave del deposito.",
@@ -154,8 +151,8 @@ export const SCENES: Record<string, Scene> = {
         size: 24,
         kind: "npc",
         label: "PESCADOR",
-        x: 33,
-        y: 45,
+        x: 67,
+        y: 44,
         lines: [
           "PESCADOR: El rio trae mas espias que peces ultimamente.",
           "PESCADOR: Tomá esta polvora, escondela bien.",
@@ -170,8 +167,8 @@ export const SCENES: Record<string, Scene> = {
     name: "CONVENTO",
     tiles: TILEMAPS["convento"]!,
     map: { x: 45, y: 24 },
-    spawn: { x: 62, y: 88 },
-    exits: [{ dir: "down", to: "plaza", x: 50, y: 92, w: 24, h: 5, label: "A LA PLAZA" }],
+    spawn: { x: 50, y: 88 },
+    exits: [{ dir: "down", to: "plaza", x: 50, y: 99, w: 10, h: 5, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "monje",
@@ -179,8 +176,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "FRAILE",
-        x: 24,
-        y: 47,
+        x: 50,
+        y: 30,
         lines: [
           "FRAILE: Aqui rezamos y callamos, hijo.",
           "FRAILE: Guardé esto para vos: los planos del regimiento.",
@@ -195,8 +192,8 @@ export const SCENES: Record<string, Scene> = {
         size: 16,
         kind: "objeto",
         label: "CAMPANARIO",
-        x: 32,
-        y: 18,
+        x: 20,
+        y: 84,
         lines: ["La campana esta trabada con un trapo.", "Alguien no queria que suene."],
       },
     ],
