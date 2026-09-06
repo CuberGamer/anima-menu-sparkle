@@ -1,6 +1,3 @@
-import scenePlaza from "@/assets/scene-plaza.jpg.asset.json";
-import scenePuerto from "@/assets/scene-puerto.jpg.asset.json";
-import sceneConvento from "@/assets/scene-convento.jpg.asset.json";
 import spriteAldeano from "@/assets/npc-aldeano.png";
 import spriteSoldado from "@/assets/npc-soldado.png";
 import spriteFraile from "@/assets/npc-fraile.png";
@@ -8,6 +5,7 @@ import spriteCarreta from "@/assets/obj-carreta.png";
 import spriteCampana from "@/assets/obj-campana.png";
 
 import type { Rect } from "./collision";
+import { TILEMAPS, tilemapBlockers } from "./tilemap";
 
 export type Dir = "up" | "down" | "left" | "right";
 
@@ -46,12 +44,13 @@ export type Exit = {
 export type Scene = {
   id: string;
   name: string;
-  image: string;
+  /** grilla de tiles de la escena (el mapa se dibuja desde cero) */
+  tiles: string[];
   /** posicion aproximada en el minimapa (porcentaje) */
   map: { x: number; y: number };
   /** posicion inicial del jugador al entrar a la escena */
   spawn: { x: number; y: number };
-  /** obstaculos solidos del mapa (colisiones) */
+  /** obstaculos solidos derivados de los tiles solidos */
   blockers: Rect[];
   exits: Exit[];
   hotspots: Hotspot[];
@@ -73,14 +72,9 @@ export const SCENES: Record<string, Scene> = {
   plaza: {
     id: "plaza",
     name: "PLAZA MAYOR",
-    image: scenePlaza.url,
+    tiles: TILEMAPS["plaza"]!,
     map: { x: 48, y: 50 },
     spawn: { x: 50, y: 86 },
-    blockers: [
-      { x: 38, y: 46, w: 14, h: 8 },
-      { x: 70, y: 62, w: 14, h: 8 },
-      { x: 20, y: 68, w: 15, h: 8 },
-    ],
     exits: [
       { dir: "right", to: "puerto", x: 94, y: 71, w: 8, h: 44, label: "AL PUERTO" },
       { dir: "up", to: "convento", x: 70, y: 48, w: 16, h: 5, label: "AL CONVENTO" },
@@ -132,13 +126,9 @@ export const SCENES: Record<string, Scene> = {
   puerto: {
     id: "puerto",
     name: "PUERTO",
-    image: scenePuerto.url,
+    tiles: TILEMAPS["puerto"]!,
     map: { x: 74, y: 55 },
     spawn: { x: 20, y: 82 },
-    blockers: [
-      { x: 26, y: 46, w: 18, h: 10 },
-      { x: 52, y: 58, w: 16, h: 8 },
-    ],
     exits: [{ dir: "left", to: "plaza", x: 6, y: 71, w: 8, h: 44, label: "A LA PLAZA" }],
     hotspots: [
       {
@@ -178,13 +168,9 @@ export const SCENES: Record<string, Scene> = {
   convento: {
     id: "convento",
     name: "CONVENTO",
-    image: sceneConvento.url,
+    tiles: TILEMAPS["convento"]!,
     map: { x: 45, y: 24 },
     spawn: { x: 62, y: 88 },
-    blockers: [
-      { x: 18, y: 46, w: 16, h: 10 },
-      { x: 28, y: 60, w: 12, h: 8 },
-    ],
     exits: [{ dir: "down", to: "plaza", x: 50, y: 92, w: 24, h: 5, label: "A LA PLAZA" }],
     hotspots: [
       {
