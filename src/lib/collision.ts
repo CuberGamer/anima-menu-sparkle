@@ -9,6 +9,9 @@ export type Rect = { x: number; y: number; w: number; h: number };
 /** Zona caminable general de una escena (los bordes y el "cielo" no se pisan). */
 export const WALK_BOUNDS: Rect = { x: 4, y: 46, w: 92, h: 48 };
 
+/** Todo el mapa por tiles es recorrible salvo los tiles solidos. */
+export const MAP_BOUNDS: Rect = { x: 0, y: 0, w: 100, h: 100 };
+
 export function rectContains(r: Rect, x: number, y: number): boolean {
   return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 }

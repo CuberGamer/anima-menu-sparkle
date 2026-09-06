@@ -1,13 +1,10 @@
-import scenePlaza from "@/assets/scene-plaza.jpg.asset.json";
-import scenePuerto from "@/assets/scene-puerto.jpg.asset.json";
-import sceneConvento from "@/assets/scene-convento.jpg.asset.json";
 import spriteAldeano from "@/assets/npc-aldeano.png";
 import spriteSoldado from "@/assets/npc-soldado.png";
 import spriteFraile from "@/assets/npc-fraile.png";
 import spriteCarreta from "@/assets/obj-carreta.png";
 import spriteCampana from "@/assets/obj-campana.png";
 
-import type { Rect } from "./collision";
+import { TILEMAPS } from "./tilemap";
 
 export type Dir = "up" | "down" | "left" | "right";
 
@@ -46,13 +43,12 @@ export type Exit = {
 export type Scene = {
   id: string;
   name: string;
-  image: string;
+  /** grilla de tiles de la escena (el mapa se dibuja desde cero) */
+  tiles: string[];
   /** posicion aproximada en el minimapa (porcentaje) */
   map: { x: number; y: number };
   /** posicion inicial del jugador al entrar a la escena */
   spawn: { x: number; y: number };
-  /** obstaculos solidos del mapa (colisiones) */
-  blockers: Rect[];
   exits: Exit[];
   hotspots: Hotspot[];
 };
@@ -73,17 +69,12 @@ export const SCENES: Record<string, Scene> = {
   plaza: {
     id: "plaza",
     name: "PLAZA MAYOR",
-    image: scenePlaza.url,
+    tiles: TILEMAPS["plaza"]!,
     map: { x: 48, y: 50 },
-    spawn: { x: 50, y: 86 },
-    blockers: [
-      { x: 38, y: 46, w: 14, h: 8 },
-      { x: 70, y: 62, w: 14, h: 8 },
-      { x: 20, y: 68, w: 15, h: 8 },
-    ],
+    spawn: { x: 50, y: 75 },
     exits: [
-      { dir: "right", to: "puerto", x: 94, y: 71, w: 8, h: 44, label: "AL PUERTO" },
-      { dir: "up", to: "convento", x: 70, y: 48, w: 16, h: 5, label: "AL CONVENTO" },
+      { dir: "right", to: "puerto", x: 98, y: 54, w: 5, h: 16, label: "AL PUERTO" },
+      { dir: "up", to: "convento", x: 50, y: 8, w: 10, h: 14, label: "AL CONVENTO" },
     ],
     hotspots: [
       {
@@ -92,8 +83,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "VENDEDOR",
-        x: 76,
-        y: 74,
+        x: 72,
+        y: 71,
         lines: [
           "VENDEDOR: Buenas, forastero. Cuidado con los soldados.",
           "VENDEDOR: Me dejaron esta carta para alguien como vos.",
@@ -109,8 +100,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "SOLDADO",
-        x: 43,
-        y: 42,
+        x: 78,
+        y: 25,
         lines: [
           "SOLDADO: Nadie entra al cabildo sin permiso.",
           "SOLDADO: Segui tu camino y no hagas ruido.",
@@ -122,8 +113,8 @@ export const SCENES: Record<string, Scene> = {
         size: 20,
         kind: "objeto",
         label: "CARRETA",
-        x: 27,
-        y: 79,
+        x: 22,
+        y: 38,
         lines: ["Bajo la lona hay una BOLSA DE MONEDAS.", "OBTUVISTE: MONEDAS"],
         gives: "MONEDAS",
       },
@@ -132,14 +123,10 @@ export const SCENES: Record<string, Scene> = {
   puerto: {
     id: "puerto",
     name: "PUERTO",
-    image: scenePuerto.url,
+    tiles: TILEMAPS["puerto"]!,
     map: { x: 74, y: 55 },
-    spawn: { x: 20, y: 82 },
-    blockers: [
-      { x: 26, y: 46, w: 18, h: 10 },
-      { x: 52, y: 58, w: 16, h: 8 },
-    ],
-    exits: [{ dir: "left", to: "plaza", x: 6, y: 71, w: 8, h: 44, label: "A LA PLAZA" }],
+    spawn: { x: 20, y: 60 },
+    exits: [{ dir: "left", to: "plaza", x: 2, y: 54, w: 5, h: 16, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "contrabandista",
@@ -147,8 +134,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "CONTRABANDISTA",
-        x: 59,
-        y: 66,
+        x: 40,
+        y: 42,
         lines: [
           "CONTRABANDISTA: Traes la carta? Bien.",
           "CONTRABANDISTA: Toma la llave del deposito.",
@@ -164,8 +151,8 @@ export const SCENES: Record<string, Scene> = {
         size: 24,
         kind: "npc",
         label: "PESCADOR",
-        x: 33,
-        y: 45,
+        x: 67,
+        y: 44,
         lines: [
           "PESCADOR: El rio trae mas espias que peces ultimamente.",
           "PESCADOR: Tomá esta polvora, escondela bien.",
@@ -178,14 +165,10 @@ export const SCENES: Record<string, Scene> = {
   convento: {
     id: "convento",
     name: "CONVENTO",
-    image: sceneConvento.url,
+    tiles: TILEMAPS["convento"]!,
     map: { x: 45, y: 24 },
-    spawn: { x: 62, y: 88 },
-    blockers: [
-      { x: 18, y: 46, w: 16, h: 10 },
-      { x: 28, y: 60, w: 12, h: 8 },
-    ],
-    exits: [{ dir: "down", to: "plaza", x: 50, y: 92, w: 24, h: 5, label: "A LA PLAZA" }],
+    spawn: { x: 50, y: 88 },
+    exits: [{ dir: "down", to: "plaza", x: 50, y: 99, w: 10, h: 5, label: "A LA PLAZA" }],
     hotspots: [
       {
         id: "monje",
@@ -193,8 +176,8 @@ export const SCENES: Record<string, Scene> = {
         size: 26,
         kind: "npc",
         label: "FRAILE",
-        x: 24,
-        y: 47,
+        x: 50,
+        y: 30,
         lines: [
           "FRAILE: Aqui rezamos y callamos, hijo.",
           "FRAILE: Guardé esto para vos: los planos del regimiento.",
@@ -209,8 +192,8 @@ export const SCENES: Record<string, Scene> = {
         size: 16,
         kind: "objeto",
         label: "CAMPANARIO",
-        x: 32,
-        y: 18,
+        x: 20,
+        y: 84,
         lines: ["La campana esta trabada con un trapo.", "Alguien no queria que suene."],
       },
     ],
